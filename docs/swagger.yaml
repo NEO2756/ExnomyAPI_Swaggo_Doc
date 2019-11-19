@@ -1,5 +1,110 @@
-basePath: https://api.exnomy.com/
-host: localhost:8080
+definitions:
+  api.ApiError:
+    properties:
+      code:
+        type: integer
+      desc:
+        type: string
+    type: object
+  api.Bar:
+    properties:
+      close:
+        type: number
+      high:
+        type: number
+      low:
+        type: number
+      open:
+        type: number
+      time:
+        type: integer
+      volume:
+        type: number
+    type: object
+  api.Market:
+    properties:
+      amount24h:
+        type: number
+      amountDecimals:
+        type: integer
+      asMakerFeeRate:
+        type: number
+      asTakerFeeRate:
+        type: number
+      baseToken:
+        type: string
+      baseTokenAddress:
+        type: string
+      baseTokenDecimals:
+        type: integer
+      baseTokenName:
+        type: string
+      baseTokenProjectUrl:
+        type: string
+      gasFeeAmount:
+        type: number
+      id:
+        type: string
+      lastPrice:
+        type: number
+      lastPriceIncrease:
+        type: number
+      marketOrderMaxSlippage:
+        type: number
+      minOrderSize:
+        type: number
+      price24h:
+        type: number
+      priceDecimals:
+        type: integer
+      pricePrecision:
+        type: integer
+      quoteToken:
+        type: string
+      quoteTokenAddress:
+        type: string
+      quoteTokenDecimals:
+        type: integer
+      quoteTokenVolume24h:
+        type: number
+      supportedOrderTypes:
+        items:
+          type: string
+        type: array
+    type: object
+  api.QueryOrderResp:
+    properties:
+      count:
+        type: integer
+      orders:
+        type: string
+    type: object
+  api.QuerySingleOrderResp:
+    properties:
+      order:
+        type: string
+    type: object
+  api.QueryTradeResp:
+    properties:
+      count:
+        type: integer
+      trades:
+        type: string
+    type: object
+  api.SnapshotV2:
+    properties:
+      asks:
+        items:
+          type: '&{%!s(token.Pos=365) %!s(*ast.BasicLit=&{366 5 2}) string}'
+        type: array
+      bids:
+        items:
+          type: '&{%!s(token.Pos=329) %!s(*ast.BasicLit=&{330 5 2}) string}'
+        type: array
+      sequence:
+        type: integer
+    type: object
+host: api.exnomy.com
 info:
   contact:
     email: info@dexhigh.com
@@ -12,7 +117,167 @@ info:
   termsOfService: https://www.exnomy.com/terms-and-privacy
   title: Exnomy API Swagger Documentation
   version: "1.0"
-paths: {}
+paths:
+  /markets:
+    get:
+      consumes:
+      - application/json
+      description: Find published markets from db and attach last 24hr market status
+        for each market.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/api.Market'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ApiError'
+      summary: Show all Published markets
+  /markets/{marketID}/candles:
+    get:
+      consumes:
+      - application/json
+      description: Get high, low, open, close and volume data for an interval defined
+        bt from to to param.
+      parameters:
+      - description: Market ID, ex XRP-BTC
+        in: path
+        name: marketID
+        required: true
+        type: string
+      - description: from
+        in: query
+        name: from
+        required: true
+        type: integer
+      - description: to
+        in: query
+        name: to
+        required: true
+        type: integer
+      - description: granularity
+        in: query
+        name: granularity
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/api.Bar'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ApiError'
+      summary: Get Bar data from 'from' to 'to'.
+  /markets/{marketID}/orderbook:
+    get:
+      consumes:
+      - application/json
+      description: Find the latest snapshot version 2 corresponding to MarketID
+      parameters:
+      - description: 'MarketID (ex: XRP-BTC)'
+        in: path
+        name: marketID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.SnapshotV2'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ApiError'
+      summary: Get OrderBook for a particular market ID.
+  /markets/{marketID}/trades:
+    get:
+      consumes:
+      - application/json
+      description: Find all the trades for a particular market
+      parameters:
+      - description: MarketID (ex XRP-BTC)
+        in: path
+        name: marketID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.QueryTradeResp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ApiError'
+      summary: Show all trades for a market
+  /orders:
+    get:
+      consumes:
+      - application/json
+      description: Find latest 'N' speacified orders, 20 if 'N' is not speacifies
+        corresponding to particular MarketID and user address.
+      parameters:
+      - description: registered user address
+        in: body
+        name: user_address
+        required: true
+        schema:
+          type: string
+      - description: MarketID
+        in: path
+        name: market_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.QueryOrderResp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ApiError'
+      summary: Show orders, reverse-chrono order.
+  /orders/{orderID}:
+    get:
+      consumes:
+      - application/json
+      description: Get order corresponding to a particular order ID
+      parameters:
+      - description: OrderID
+        in: query
+        name: orderID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.QuerySingleOrderResp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ApiError'
+      summary: Get Single order
 securityDefinitions:
   ExnomyAuthToken:
     in: header
