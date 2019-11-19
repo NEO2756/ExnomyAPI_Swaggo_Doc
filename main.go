@@ -1,7 +1,7 @@
 package main
 
 import (
-	_ "github.com/blockbankcoltd/ExnomyAPI_Swaggo_Doc/docs"
+	_ "github.com/NEO2756/ExnomyAPI_Swaggo_Doc/docs"
 
 	"github.com/labstack/echo/v4"
 	echoSwagger "github.com/swaggo/echo-swagger"
