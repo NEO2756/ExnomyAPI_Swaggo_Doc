@@ -1,0 +1,23 @@
+basePath: https://api.exnomy.com/
+host: localhost:8080
+info:
+  contact:
+    email: info@dexhigh.com
+    name: Exnomy Support
+    url: https://www.exnomy.com/terms-and-privacy
+  description: This is Exnomy API Server.
+  license:
+    name: Apache 2.0
+    url: https://github.com/blockbankcoltd/Exnomy/blob/master/LICENSE
+  termsOfService: https://www.exnomy.com/terms-and-privacy
+  title: Exnomy API Swagger Documentation
+  version: "1.0"
+paths: {}
+securityDefinitions:
+  ExnomyAuthToken:
+    in: header
+    name: Authorization (DEX-EXONOMY-AUTH should be like {address}#DEX-EXONOMY-AUTH@{time}#{signature})
+    type: apiKey
+swagger: "2.0"
+x-extension-openapi:
+  example: value on a json format

@@ -1,0 +1,31 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is Exnomy API Server.",
+        "title": "Exnomy API Swagger Documentation",
+        "termsOfService": "https://www.exnomy.com/terms-and-privacy",
+        "contact": {
+            "name": "Exnomy Support",
+            "url": "https://www.exnomy.com/terms-and-privacy",
+            "email": "info@dexhigh.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "https://github.com/blockbankcoltd/Exnomy/blob/master/LICENSE"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "https://api.exnomy.com/",
+    "paths": {},
+    "securityDefinitions": {
+        "ExnomyAuthToken": {
+            "type": "apiKey",
+            "name": "Authorization (DEX-EXONOMY-AUTH should be like {address}#DEX-EXONOMY-AUTH@{time}#{signature})",
+            "in": "header"
+        }
+    },
+    "x-extension-openapi": {
+        "example": "value on a json format"
+    }
+}
