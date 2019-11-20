@@ -21,6 +21,55 @@ definitions:
       volume:
         type: number
     type: object
+  api.BuildOrderReq:
+    properties:
+      address:
+        type: string
+      amount:
+        type: string
+      expires:
+        type: integer
+      marketID:
+        description: ID this is userid
+        type: string
+      orderType:
+        type: string
+      price:
+        type: string
+      side:
+        type: string
+    required:
+    - amount
+    - marketID
+    - orderType
+    - price
+    - side
+    type: object
+  api.BuildOrderResp:
+    properties:
+      amount:
+        type: number
+      asMakerFeeRate:
+        type: number
+      asTakerFeeRate:
+        type: number
+      gasFeeAmount:
+        type: number
+      id:
+        type: string
+      json:
+        type: string
+      makerRebateRate:
+        type: number
+      marketID:
+        type: string
+      price:
+        type: number
+      side:
+        type: string
+      type:
+        type: string
+    type: object
   api.CancelOrderReq:
     properties:
       address:
@@ -89,32 +138,34 @@ paths:
     get:
       consumes:
       - application/json
-      description: "Find published markets from db and attach last 24hr market status
-        for each market.\n{\n\"status\": int,    [Status Code, 0 for Success , Greater
-        than 0 for ERROR]\n\"desc\": \"string\", [Description String for Success and
-        Failue]\n\"data\": \"Array Of Objects\",    [Array of Market Object]\n\"markets\":
-        [   [Market Model]\n{\n\"id\": \"string\",  [Market ID, Symbol Pair ex - XRP-BTC]\n\"baseToken\":
-        \"string\", [SYMBOL of the Base Token, ex - XRP]\n\"baseTokenProjectUrl\":
-        \"URI\", [OPTIONAL, URL of the BaseToken Projet, ex - www.ripple.com]\n\"baseTokenName\":
-        \"string\", [NAME of the Base Token, ex - Riple]\n\"baseTokenDecimals\": int,
-        [DECIMAL of the Base Token, ex - 8]\n\"baseTokenAddress\": [ADDRESS of the
-        Base Token],\n\"quoteToken\": \"string\", [SYMBOL of the Quote Token, ex -
-        BTC]\n\"quoteTokenDecimals\": int, [DECIMAL of the Quote Token, ex - 8]\n\"quoteTokenAddress\":
-        string, [ADDRESS of the Base Token]\n\"minOrderSize\": \"string\", [MINIMUM
-        order size for BASE-QUOTE token pair, ex- 0.0001]\n\"pricePrecision\": int,
-        [PRECISION FOR PRICE for BASE-QUOTE token pair, ex- 5]\n\"priceDecimals\":
-        int, [DECIMAL FOR PRICE for BASE-QUOTE token pair, ex- 8]\n\"amountDecimals\":
-        int, [DECIMALS FOR AMOUNT for BASE-QUOTE token pair, ex- 6]\n\"asMakerFeeRate\":
-        \"string\", [MAKER fee rate string for BASE-QUOTE token pair]\n\"asTakerFeeRate\":
-        \"string\", [TAKER fee rate string for BASE-QUOTE token pair]\n\"gasFeeAmount\":
-        \"string\",   [NOT applicable]\n\"supportedOrderTypes\": [   [only LIMIT is
-        supported right now]\n\"limit\",\n\"market\"\n],\n\"marketOrderMaxSlippage\":
-        \"string\", [FUTURE USE, Not applicable right now]\n\"lastPriceIncrease\":
-        \"string\",      [LAST PRICE INCREASE value]\n\"lastPrice\": \"string\",              [Last
-        Traded Price]\n\"price24h\": \"string\",\t\t\t\t[PRICE CHANGE in last 24hrs,
-        ex - +0.3 % OR -0.4 %]\n\"amount24h\": \"string\",\t\t\t\t[LAST 24hr TOTAL
-        AMOUNT CHANGE]\n\"quoteTokenVolume24h\": \"246789\"     [VOLUME of LAST 24Hr
-        Traded QUOTE TOKEN]\n}\n]\n}\n}"
+      description: "**Find published markets from db and attach last 24hr market status
+        for each market**\n```\n{\n\"status\": int,\t\t\t\t\t\t\t\t\t\t[Status Code,
+        0 for Success , Greater than 0 for ERROR]\n\"desc\": \"string\",\t\t\t\t\t\t\t\t\t[Description
+        String for Success and Failue]\n\"data\": \"Array Of Objects\",\t\t\t\t\t\t\t[Array
+        of Market Object]\n\"markets\": [   [Market Model]\n{\n\"id\": \"string\",
+        \               \t\t\t[Market ID, Symbol Pair ex - XRP-BTC]\n\"baseToken\":
+        \"string\", \t\t\t\t\t[SYMBOL of the Base Token, ex - XRP]\n\"baseTokenProjectUrl\":
+        \"URI\", \t\t\t[OPTIONAL, URL of the BaseToken Projet, ex - www.ripple.com]\n\"baseTokenName\":
+        \"string\", \t\t\t\t[NAME of the Base Token, ex - Riple]\n\"baseTokenDecimals\":
+        int, \t\t\t\t[DECIMAL of the Base Token, ex - 8]\n\"baseTokenAddress\": \t\t\t\t\t[ADDRESS
+        of the Base Token],\n\"quoteToken\": \"string\", \t\t\t\t[SYMBOL of the Quote
+        Token, ex - BTC]\n\"quoteTokenDecimals\": int, \t\t\t\t[DECIMAL of the Quote
+        Token, ex - 8]\n\"quoteTokenAddress\": string, \t\t\t[ADDRESS of the Base
+        Token]\n\"minOrderSize\": \"string\", \t\t\t\t[MINIMUM order size for BASE-QUOTE
+        token pair, ex- 0.0001]\n\"pricePrecision\": int, \t\t\t\t\t[PRECISION FOR
+        PRICE for BASE-QUOTE token pair, ex- 5]\n\"priceDecimals\": int, \t\t\t\t\t[DECIMAL
+        FOR PRICE for BASE-QUOTE token pair, ex- 8]\n\"amountDecimals\": int, \t\t\t\t\t[DECIMALS
+        FOR AMOUNT for BASE-QUOTE token pair, ex- 6]\n\"asMakerFeeRate\": \"string\",
+        \t\t\t[MAKER fee rate string for BASE-QUOTE token pair]\n\"asTakerFeeRate\":
+        \"string\", \t\t\t[TAKER fee rate string for BASE-QUOTE token pair]\n\"gasFeeAmount\":
+        \"string\",   \t\t\t[NOT applicable]\n\"supportedOrderTypes\": [   \t\t\t\t[only
+        LIMIT is supported right now]\n\"limit\",\n\"market\"\n],\n\"marketOrderMaxSlippage\":
+        \"string\",\t\t[FUTURE USE, Not applicable right now]\n\"lastPriceIncrease\":
+        \"string\",      \t[LAST PRICE INCREASE value]\n\"lastPrice\": \"string\",
+        \             \t[Last Traded Price]\n\"price24h\": \"string\",\t\t\t\t\t[PRICE
+        CHANGE in last 24hrs, ex - +0.3 % OR -0.4 %]\n\"amount24h\": \"string\",\t\t\t\t\t[LAST
+        24hr TOTAL AMOUNT CHANGE]\n\"quoteTokenVolume24h\": \"246789\"     \t[VOLUME
+        of LAST 24Hr Traded QUOTE TOKEN]\n}\n]\n}\n}"
       produces:
       - application/json
       responses:
@@ -134,7 +185,8 @@ paths:
       consumes:
       - application/json
       description: |-
-        Get high, low, open, close and volume data for an interval defined bt from to to param.
+        **Get high, low, open, close and volume data for an interval defined bt from to to param.**
+        ```
         {
         "status": int,    [STATUS CODE, 0 for Success , Greater than 0 for ERROR]
         "desc": "string", [Description String for Success and Failue]
@@ -151,6 +203,7 @@ paths:
         ]
         }
         }
+        ```
       parameters:
       - description: Market ID, ex XRP-BTC
         in: path
@@ -190,29 +243,14 @@ paths:
     get:
       consumes:
       - application/json
-      description: |-
-        Find the latest snapshot version 2 corresponding to MarketID
-        {
-        "status": int,    [Status Code, 0 for Success , Greater than 0 for ERROR]
-        "desc": "string", [Description String for Success and Failue]
-        "data": {
-        "orderBook": {
-        "sequence": int,  [Database speacific Sequence Number]
-        "bids": [   "Array of Objects", [Array bids Object]
-        [
-        "string", [Bid Price, ex - "0.00003108"]
-        "string", [Bif Amount, ex - "330"]
-        ]
-        ],
-        "asks": [ "Array of Objects", [Array asks Object]
-        [
-        "string", [Ask price, ex - "0.00003108"]
-        "string", [Ask Amount, ex - "330"]
-        ]
-        ]
-        }
-        }
-        }
+      description: "**Find the latest snapshot version 2 corresponding to MarketID**\n```\n{\n\"status\":
+        int,    \t\t\t\t[Status Code, 0 for Success , Greater than 0 for ERROR]\n\"desc\":
+        \"string\", \t\t\t\t[Description String for Success and Failue]\n\"data\":
+        {\n\"orderBook\": {\n\"sequence\": int, \t\t[Database speacific Sequence Number]\n\"bids\":
+        \t\t\t\t[\"Array of Objects\", [Array bids Object]\n[\n\"string\", \t\t[Bid
+        Price, ex - \"0.00003108\"]\n\"string\", \t\t[Bif Amount, ex - \"330\"]\n]\n],\n\"asks\":
+        \t\t\t\t[Array of Objects, [Array asks Object]\n[\n\"string\", \t\t[Ask price,
+        ex - \"0.00003108\"]\n\"string\", \t\t[Ask Amount, ex - \"330\"]\n]\n]\n}\n}\n}"
       parameters:
       - description: 'MarketID (ex: XRP-BTC)'
         in: path
@@ -236,7 +274,8 @@ paths:
       consumes:
       - application/json
       description: |-
-        Find all the trades for a particular market
+        **Find all the trades for a particular market**
+        ```
         {
         "status": int,    [STATUS CODE, 0 for Success , Greater than 0 for ERROR]
         "desc": "string", [Description String for Success and Failue]
@@ -264,6 +303,7 @@ paths:
         ]
         }
         }
+        ```
       parameters:
       - description: MarketID (ex XRP-BTC)
         in: path
@@ -286,12 +326,13 @@ paths:
     get:
       consumes:
       - application/json
-      description: "Find latest 'N' speacified orders, 20 if 'N' is not speacifies
-        corresponding to particular MarketID and user address.\n\"status\": int,    [STATUS
-        CODE, 0 for Success , Greater than 0 for ERROR]\n\"desc\": \"string\", [Description
-        String for Success and Failue]\n\"data\": {\n\"count\": int, \t\t\t\t\t   [Size
-        of the Order Array]\n\"orders\": [\t\t\t\t\t       [Order Array]\n{\n\"id\":
-        \"string\",                [Order ID of the Requested Order ex - 0x8d9cafdbed805fb495f7e29c9cf7a269e140f326701f388e77d840228134b103]\n\"traderAddress\":
+      description: "**Find latest 'N' speacified orders, 20 if 'N' is not speacifies
+        corresponding to particular MarketID and user address**\n```\n\"status\":
+        int,    [STATUS CODE, 0 for Success , Greater than 0 for ERROR]\n\"desc\":
+        \"string\", [Description String for Success and Failue]\n\"data\": {\n\"count\":
+        int, \t\t\t\t\t   [Size of the Order Array]\n\"orders\": [\t\t\t\t\t       [Order
+        Array]\n{\n\"id\": \"string\",                [Order ID of the Requested Order
+        ex - 0x8d9cafdbed805fb495f7e29c9cf7a269e140f326701f388e77d840228134b103]\n\"traderAddress\":
         \"string\",     [Address of the Trader used for Loging In],\n\"marketID\":
         \"string\",          [Market ID of the order, ex - XRP-BTC]\n\"side\": \"string\",
         \             [Side of the Order, ex - buy OR sell]\n\"price\": \"string\",
@@ -309,14 +350,15 @@ paths:
         fee Amount in terms of speacified tokens, NOT APPLICABLE in EXNOMY]\n\"json\":
         \"string\",              [josn string of this order]\n\"createdAt\": \"time\",
         \t\t   [time at which has been created, ex - 2019-11-20T10:07:52.523606Z]\n\"updatedAt\":
-        \t\t\t\t   [time at which has been updated, ex - 2019-11-20T10:07:52.523606Z]\n}\n]\n}\n}"
+        \t\t\t\t   [time at which has been updated, ex - 2019-11-20T10:07:52.523606Z]\n}\n]\n}\n}\n```"
       parameters:
       - description: MarketID ex - XRP-BTC
         in: query
         name: marketID
         required: true
         type: string
-      - description: DEX-AUTH-TOKEN, ex - 0x31ebd457b999bf99759602f5ece5aa5033cb56b3#DEX-EXONOMY-AUTH#0xe99ac942cc4e126e62e1a98c756bf3e3e09de1dc5cbead6b02992063084af399120a45642a8e2876c608d43f11aaa07d7511d338e7d7d4acdc91e1e90c05e3581c
+      - description: '**DEX-AUTH-TOKEN is combination of <''AccountAddress''>#DEX-EXONOMY-AUTH#<Signature
+          of Str ''DEX-EXNOMY-AUTH''>**, ex - 0x31ebd457b999bf99759602f5ece5aa5033cb56b3#DEX-EXONOMY-AUTH#0xe99ac942cc4e126e62e1a98c756bf3e3e09de1dc5cbead6b02992063084af399120a45642a8e2876c608d43f11aaa07d7511d338e7d7d4acdc91e1e90c05e3581c'
         in: header
         name: DEX-EXONOMY-AUTH
         required: true
@@ -337,14 +379,15 @@ paths:
     delete:
       consumes:
       - application/json
-      description: Find the order with ID speacified as OrderID and Mark it cancel.
+      description: '**Find the order with ID speacified as OrderID and Mark it cancel.**'
       parameters:
       - description: OrderID
         in: path
         name: OrderID
         required: true
         type: string
-      - description: DEX-AUTH-TOKEN, ex - 0x31ebd457b999bf99759602f5ece5aa5033cb56b3#DEX-EXONOMY-AUTH#0xe99ac942cc4e126e62e1a98c756bf3e3e09de1dc5cbead6b02992063084af399120a45642a8e2876c608d43f11aaa07d7511d338e7d7d4acdc91e1e90c05e3581c
+      - description: '**DEX-AUTH-TOKEN is combination of <''AccountAddress''>#DEX-EXONOMY-AUTH#<Signature
+          of Str ''DEX-EXNOMY-AUTH''>**, ex - 0x31ebd457b999bf99759602f5ece5aa5033cb56b3#DEX-EXONOMY-AUTH#0xe99ac942cc4e126e62e1a98c756bf3e3e09de1dc5cbead6b02992063084af399120a45642a8e2876c608d43f11aaa07d7511d338e7d7d4acdc91e1e90c05e3581c'
         in: header
         name: DEX-EXONOMY-AUTH
         required: true
@@ -365,7 +408,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: "Get order corresponding to a particular order ID\n{\n\"status\":
+      description: "**Get order corresponding to a particular order ID**\n```\n{\n\"status\":
         int,    [STATUS CODE, 0 for Success , Greater than 0 for ERROR]\n\"desc\":
         \"string\", [Description String for Success and Failue]\n\"data\": {\n\"order\":
         {\n\"id\": \"string\",                [Order ID of the Requested Order ex
@@ -387,14 +430,15 @@ paths:
         fee Amount in terms of speacified tokens, NOT APPLICABLE in EXNOMY]\n\"json\":
         \"string\",              [josn string of this order]\n\"createdAt\": \"time\",
         \t\t   [time at which has been created, ex - 2019-11-20T10:07:52.523606Z]\n\"updatedAt\":
-        \t\t\t\t   [time at which has been updated, ex - 2019-11-20T10:07:52.523606Z]\n}\n}\n}"
+        \t\t\t\t   [time at which has been updated, ex - 2019-11-20T10:07:52.523606Z]\n}\n}\n}\n```"
       parameters:
       - description: OrderID
         in: path
         name: orderID
         required: true
         type: string
-      - description: DEX-AUTH-TOKEN, ex - 0x31ebd457b999bf99759602f5ece5aa5033cb56b3#DEX-EXONOMY-AUTH#0xe99ac942cc4e126e62e1a98c756bf3e3e09de1dc5cbead6b02992063084af399120a45642a8e2876c608d43f11aaa07d7511d338e7d7d4acdc91e1e90c05e3581c
+      - description: '**DEX-AUTH-TOKEN is combination of <''AccountAddress''>#DEX-EXONOMY-AUTH#<Signature
+          of Str ''DEX-EXNOMY-AUTH''>**, ex - 0x31ebd457b999bf99759602f5ece5aa5033cb56b3#DEX-EXONOMY-AUTH#0xe99ac942cc4e126e62e1a98c756bf3e3e09de1dc5cbead6b02992063084af399120a45642a8e2876c608d43f11aaa07d7511d338e7d7d4acdc91e1e90c05e3581c'
         in: header
         name: DEX-EXONOMY-AUTH
         required: true
@@ -411,6 +455,51 @@ paths:
           schema:
             $ref: '#/definitions/api.ApiError'
       summary: Get Single order
+  /orders/build:
+    post:
+      consumes:
+      - application/json
+      description: "**Builds Order data and Cache the order which will be reused at
+        the time of PlaceOrder**\n```\nRequest Body\n{\n\"address\": \"string\",\t\t[Wallet
+        Address]\n\"amount\": \"string\",\t\t\t[Amount of the Order]\n\"expires\":
+        0,\t\t\t\t[Time when order can expire, Optional param]\n\"marketID\": \"string\",\t\t[Market
+        ID, ex - XRP-BTC]\n\"orderType\": \"string\",\t\t[Type of Order, Limit or
+        Market, Only Limit is Supported right now]\n\"price\": \"string\",\t\t\t[Price
+        of the Order]\n\"side\": \"string\"\t\t\t[side of order, Buy OR Sell]\n}\nResponse
+        Body\n{\n\"amount\": 0, \t\t\t\t[Amount of Order]\n\"asMakerFeeRate\": 0,\t\t[Maker
+        Fee Rate]\n\"asTakerFeeRate\": 0,\t\t[Taker Fee Rate]\n\"gasFeeAmount\": 0,\t\t\t[gasFeeAmount,
+        Not Applicable  right now]\n\"id\": \"string\",\t\t\t\t[Generated ID of the
+        order]\n\"json\": \"string\",\t\t\t[json string of Order]\n\"makerRebateRate\":
+        0,\t\t[Maker FRebate rate]\n\"marketID\": \"string\",\t\t[market ID, ex -
+        XRP-BTC]\n\"price\": 0,\t\t\t\t\t[Price of the order]\n\"side\": \"string\",\t\t\t[side
+        of order, Buy OR Sell]\n\"type\": \"string\"\t\t\t[Type of Order, Limit or
+        Market, Only Limit is Supported right now]\n}\n```"
+      parameters:
+      - description: Build Order request
+        in: body
+        name: buildParams
+        required: true
+        schema:
+          $ref: '#/definitions/api.BuildOrderReq'
+          type: object
+      - description: '**DEX-AUTH-TOKEN is combination of <''AccountAddress''>#DEX-EXONOMY-AUTH#<Signature
+          of Str ''DEX-EXNOMY-AUTH''>**, ex - 0x31ebd457b999bf99759602f5ece5aa5033cb56b3#DEX-EXONOMY-AUTH#0xe99ac942cc4e126e62e1a98c756bf3e3e09de1dc5cbead6b02992063084af399120a45642a8e2876c608d43f11aaa07d7511d338e7d7d4acdc91e1e90c05e3581c'
+        in: header
+        name: DEX-EXONOMY-AUTH
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.BuildOrderResp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ApiError'
+      summary: Build an Order.
 schemes:
 - https
 securityDefinitions:
