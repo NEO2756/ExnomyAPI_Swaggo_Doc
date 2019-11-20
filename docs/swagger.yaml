@@ -21,56 +21,14 @@ definitions:
       volume:
         type: number
     type: object
-  api.Market:
+  api.CancelOrderReq:
     properties:
-      amount24h:
-        type: number
-      amountDecimals:
-        type: integer
-      asMakerFeeRate:
-        type: number
-      asTakerFeeRate:
-        type: number
-      baseToken:
+      address:
         type: string
-      baseTokenAddress:
-        type: string
-      baseTokenDecimals:
-        type: integer
-      baseTokenName:
-        type: string
-      baseTokenProjectUrl:
-        type: string
-      gasFeeAmount:
-        type: number
       id:
         type: string
-      lastPrice:
-        type: number
-      lastPriceIncrease:
-        type: number
-      marketOrderMaxSlippage:
-        type: number
-      minOrderSize:
-        type: number
-      price24h:
-        type: number
-      priceDecimals:
-        type: integer
-      pricePrecision:
-        type: integer
-      quoteToken:
-        type: string
-      quoteTokenAddress:
-        type: string
-      quoteTokenDecimals:
-        type: integer
-      quoteTokenVolume24h:
-        type: number
-      supportedOrderTypes:
-        items:
-          type: string
-        type: array
+    required:
+    - id
     type: object
   api.QueryOrderResp:
     properties:
@@ -90,6 +48,15 @@ definitions:
         type: integer
       trades:
         type: string
+    type: object
+  api.Response:
+    properties:
+      data:
+        type: object
+      desc:
+        type: string
+      status:
+        type: integer
     type: object
   api.SnapshotV2:
     properties:
@@ -122,8 +89,32 @@ paths:
     get:
       consumes:
       - application/json
-      description: Find published markets from db and attach last 24hr market status
-        for each market.
+      description: "Find published markets from db and attach last 24hr market status
+        for each market.\n{\n\"status\": int,    [STATUS CODE, 0 for Success , Greater
+        than 0 for ERROR]\n\"desc\": \"string\", [Description String for Success and
+        Failue]\n\"data\": \"Array Of Objects\",    [Array of Market Object]\n\"markets\":
+        [   [Market Model]\n{\n\"id\": \"string\",  [Market ID, Symbol Pair ex - XRP-BTC]\n\"baseToken\":
+        \"string\", [SYMBOL of the Base Token, ex - XRP]\n\"baseTokenProjectUrl\":
+        \"URI\", [OPTIONAL, URL of the BaseToken Projet, ex - www.ripple.com]\n\"baseTokenName\":
+        \"string\", [NAME of the Base Token, ex - Riple]\n\"baseTokenDecimals\": int,
+        [DECIMAL of the Base Token, ex - 8]\n\"baseTokenAddress\": [ADDRESS of the
+        Base Token],\n\"quoteToken\": \"string\", [SYMBOL of the Quote Token, ex -
+        BTC]\n\"quoteTokenDecimals\": int, [DECIMAL of the Quote Token, ex - 8]\n\"quoteTokenAddress\":
+        string, [ADDRESS of the Base Token]\n\"minOrderSize\": \"string\", [MINIMUM
+        order size for BASE-QUOTE token pair, ex- 0.0001]\n\"pricePrecision\": int,
+        [PRECISION FOR PRICE for BASE-QUOTE token pair, ex- 5]\n\"priceDecimals\":
+        int, [DECIMAL FOR PRICE for BASE-QUOTE token pair, ex- 8]\n\"amountDecimals\":
+        int, [DECIMALS FOR AMOUNT for BASE-QUOTE token pair, ex- 6]\n\"asMakerFeeRate\":
+        \"string\", [MAKER FEE RATE string for BASE-QUOTE token pair]\n\"asTakerFeeRate\":
+        \"string\", [TAKER FEE RATE string for BASE-QUOTE token pair]\n\"gasFeeAmount\":
+        \"string\",   [NOT APPLICABLE]\n\"supportedOrderTypes\": [   [ONLY LIMIT is
+        supported right now]\n\"limit\",\n\"market\"\n],\n\"marketOrderMaxSlippage\":
+        \"string\", [FUTURE USE, Not applicable right now]\n\"lastPriceIncrease\":
+        \"string\",      [LAST PRICE INCREASE value]\n\"lastPrice\": \"string\",              [Last
+        Traded Price]\n\"price24h\": \"string\",\t\t\t\t[PRICE CHANGE in last 24hrs,
+        ex - +0.3 % OR -0.4 %]\n\"amount24h\": \"string\",\t\t\t\t[LAST 24hr TOTAL
+        AMOUNT CHANGE]\n\"quoteTokenVolume24h\": \"246789\"     [VOLUME of LAST 24Hr
+        Traded QUOTE TOKEN]\n}\n]\n}\n}"
       produces:
       - application/json
       responses:
@@ -131,7 +122,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/api.Market'
+              $ref: '#/definitions/api.Response'
             type: array
         "400":
           description: Bad Request
@@ -142,8 +133,24 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get high, low, open, close and volume data for an interval defined
-        bt from to to param.
+      description: |-
+        Get high, low, open, close and volume data for an interval defined bt from to to param.
+        {
+        "status": int,    [STATUS CODE, 0 for Success , Greater than 0 for ERROR]
+        "desc": "string", [Description String for Success and Failue]
+        "data": {
+        "candles": [  [Candle Information]
+        {
+        "time": int,    [Unix timestamp of Candle, ex - 1574232000]
+        "open": "string",  [Open Price in this TimeStamp]
+        "close": "string", [Close Price in this Timestamp]
+        "low": "string",   [Lowest Trade Price in this timestamp]
+        "high": "string",  [Highest timetsamp in this timestamp]
+        "volume": "string" [Total traded volume in this timestamp]
+        }
+        ]
+        }
+        }
       parameters:
       - description: Market ID, ex XRP-BTC
         in: path
@@ -183,7 +190,14 @@ paths:
     get:
       consumes:
       - application/json
-      description: Find the latest snapshot version 2 corresponding to MarketID
+      description: "Find the latest snapshot version 2 corresponding to MarketID\n{\n\"status\":
+        int,    [STATUS CODE, 0 for Success , Greater than 0 for ERROR]\n\"desc\":
+        \"string\", [Description String for Success and Failue]\n\"data\": {\n\"orderBook\":
+        {\n\"sequence\": int,  [DATABASE SEQUENCE NUMBER]\n\"bids\": [   \"Array of
+        Objects\", [ARRAY OF BIDS OBJECTS]\n[\n\"string\", [BID PRICE, ex - \"0.00003108\"]\n\"string\"\t\t,
+        [BID AMOUNT, ex - \"330\"]\n]\n],\n\"asks\": [ \"Array of Objects\", [ARRAY
+        OF ASKS OBJECTS]\n[\n\"string\", [ASK PRICE, ex - \"0.00003108\"]\n\"string\",
+        [ASK AMOUNT, ex - \"330\"]\n]\n]\n}\n}\n}"
       parameters:
       - description: 'MarketID (ex: XRP-BTC)'
         in: path
@@ -206,7 +220,35 @@ paths:
     get:
       consumes:
       - application/json
-      description: Find all the trades for a particular market
+      description: |-
+        Find all the trades for a particular market
+        {
+        "status": int,    [STATUS CODE, 0 for Success , Greater than 0 for ERROR]
+        "desc": "string", [Description String for Success and Failue]
+        "data": {
+        "count": int,   [Size of the trades array object]
+        "trades": [     [Array of Objects]
+        {
+        "id": int,   [DB Speacific Trade ID ]
+        "transactionID": 36671, [DB Speacific Transaction ID]
+        "transactionHash": [Hash of Trade Transaction on Blockchain ex - 0xfba0a551880a7a9458fdcd9e55078645da4a11c399be91efdd19a6a82014e731],
+        "status": "string", [Status of the Trade transaction, ex - successful, pending, pending]
+        "marketID": "string", [Market ID, ex - XRP-BTC]
+        "maker": "string", [Maker Account Address ex - 0x31ebd457b999bf99759602f5ece5aa5033cb56b3]
+        "taker": "string", [Taker Account Address ex - 0x31ebd457b999bf99759602f5ece5aa5033cb56b3],
+        "takerSide": "string", [Side of Taker order ex - but OR sell]
+        "makerOrderID": "string, [OrderID of Maker, ex - 0xbf9abcaa08bb820f791206564d261e3e36309ac16f5b091e507f0b14fb369656],
+        "takerOrderID": "string, [OrderID of Taker, ex - 0xbf9abcaa08bb820f791206564d261e3e36309ac16f5b091e507f0b14fb369656],
+        "sequence": uint, [DB speacific sequence number]
+        "amount": "uint", [Amount/Quantity of trade, ex - 230]
+        "price": "string", [Price of Trade, ex - 0.00003096]
+        "executedAt": "time", [Time When Trade executed,  ex - 2019-11-20T08:36:26Z]
+        "createdAt": "time",  [Time When Trade created,  ex - 2019-11-20T08:36:26Z]
+        "updatedAt": "time",  [Time When Trade executed,  ex - 2019-11-20T08:36:26Z]
+        }
+        ]
+        }
+        }
       parameters:
       - description: MarketID (ex XRP-BTC)
         in: path
@@ -229,18 +271,39 @@ paths:
     get:
       consumes:
       - application/json
-      description: Find latest 'N' speacified orders, 20 if 'N' is not speacifies
-        corresponding to particular MarketID and user address.
+      description: "Find latest 'N' speacified orders, 20 if 'N' is not speacifies
+        corresponding to particular MarketID and user address.\n\"status\": int,    [STATUS
+        CODE, 0 for Success , Greater than 0 for ERROR]\n\"desc\": \"string\", [Description
+        String for Success and Failue]\n\"data\": {\n\"count\": int, \t\t\t\t\t   [Size
+        of the Order Array]\n\"orders\": [\t\t\t\t\t       [Order Array]\n{\n\"id\":
+        \"string\",                [Order ID of the Requested Order ex - 0x8d9cafdbed805fb495f7e29c9cf7a269e140f326701f388e77d840228134b103]\n\"traderAddress\":
+        \"string\",     [Address of the Trader used for Loging In],\n\"marketID\":
+        \"string\",          [Market ID of the order, ex - XRP-BTC]\n\"side\": \"string\",
+        \             [Side of the Order, ex - buy OR sell]\n\"price\": \"string\",
+        \            [Price of the Order, ex - 0.00003081]\n\"amount\": \"string\",
+        \           [Amount of the Order, ex - 160]\n\"status\": \"string\",            [Status
+        of the order, canceled, pending, partial_filled OR full_filled]\n\"type\":
+        \"string\",              [Order type Limit or Market, Limit is only supported
+        right now]\n\"version\": \"string\",           [verison of the platform]\n\"availableAmount\":
+        \"string\",   [Amount available fto Trade]\n\"confirmedAmount\": \"string\",
+        \  [Traded amount, confirmed on blockchain]\n\"canceledAmount\": \"string\",
+        \   [canceled Amount]\n\"pendingAmount\": \"string\",     [Left Over Amount
+        for trading, Incase of partial fills]\n\"makerFeeRate\": \"string\",      [makerFee
+        Rate]\n\"takerFeeRate\": \"string\",      [Taker fee Rate]\n\"makerRebateRate\":
+        \"string\",   [makerRebateRate ]\n\"gasFeeAmount\": \"string\",      [Gas
+        fee Amount in terms of speacified tokens, NOT APPLICABLE in EXNOMY]\n\"json\":
+        \"string\",              [josn string of this order]\n\"createdAt\": \"time\",
+        \t\t   [time at which has been created, ex - 2019-11-20T10:07:52.523606Z]\n\"updatedAt\":
+        \t\t\t\t   [time at which has been updated, ex - 2019-11-20T10:07:52.523606Z]\n}\n]\n}\n}"
       parameters:
-      - description: registered user address
-        in: body
-        name: user_address
+      - description: MarketID ex - XRP-BTC
+        in: query
+        name: marketID
         required: true
-        schema:
-          type: string
-      - description: MarketID
-        in: path
-        name: market_id
+        type: string
+      - description: DEX-AUTH-TOKEN, ex - 0x31ebd457b999bf99759602f5ece5aa5033cb56b3#DEX-EXONOMY-AUTH#0xe99ac942cc4e126e62e1a98c756bf3e3e09de1dc5cbead6b02992063084af399120a45642a8e2876c608d43f11aaa07d7511d338e7d7d4acdc91e1e90c05e3581c
+        in: header
+        name: DEX-EXONOMY-AUTH
         required: true
         type: string
       produces:
@@ -255,15 +318,70 @@ paths:
           schema:
             $ref: '#/definitions/api.ApiError'
       summary: Show orders, reverse-chrono order.
+  /orders/{OrderID}:
+    delete:
+      consumes:
+      - application/json
+      description: Find the order with ID speacified as OrderID and Mark it cancel.
+      parameters:
+      - description: OrderID
+        in: path
+        name: OrderID
+        required: true
+        type: string
+      - description: DEX-AUTH-TOKEN, ex - 0x31ebd457b999bf99759602f5ece5aa5033cb56b3#DEX-EXONOMY-AUTH#0xe99ac942cc4e126e62e1a98c756bf3e3e09de1dc5cbead6b02992063084af399120a45642a8e2876c608d43f11aaa07d7511d338e7d7d4acdc91e1e90c05e3581c
+        in: header
+        name: DEX-EXONOMY-AUTH
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.CancelOrderReq'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ApiError'
+      summary: Cancel particular order.
   /orders/{orderID}:
     get:
       consumes:
       - application/json
-      description: Get order corresponding to a particular order ID
+      description: "Get order corresponding to a particular order ID\n{\n\"status\":
+        int,    [STATUS CODE, 0 for Success , Greater than 0 for ERROR]\n\"desc\":
+        \"string\", [Description String for Success and Failue]\n\"data\": {\n\"order\":
+        {\n\"id\": \"string\",                [Order ID of the Requested Order ex
+        - 0x8d9cafdbed805fb495f7e29c9cf7a269e140f326701f388e77d840228134b103]\n\"traderAddress\":
+        \"string\",     [Address of the Trader used for Loging In],\n\"marketID\":
+        \"string\",          [Market ID of the order, ex - XRP-BTC]\n\"side\": \"string\",
+        \             [Side of the Order, ex - buy OR sell]\n\"price\": \"string\",
+        \            [Price of the Order, ex - 0.00003081]\n\"amount\": \"string\",
+        \           [Amount of the Order, ex - 160]\n\"status\": \"string\",            [Status
+        of the order, canceled, pending, partial_filled OR full_filled]\n\"type\":
+        \"string\",              [Order type Limit or Market, Limit is only supported
+        right now]\n\"version\": \"string\",           [verison of the platform]\n\"availableAmount\":
+        \"string\",   [Amount available fto Trade]\n\"confirmedAmount\": \"string\",
+        \  [Traded amount, confirmed on blockchain]\n\"canceledAmount\": \"string\",
+        \   [canceled Amount]\n\"pendingAmount\": \"string\",     [Left Over Amount
+        for trading, Incase of partial fills]\n\"makerFeeRate\": \"string\",      [makerFee
+        Rate]\n\"takerFeeRate\": \"string\",      [Taker fee Rate]\n\"makerRebateRate\":
+        \"string\",   [makerRebateRate ]\n\"gasFeeAmount\": \"string\",      [Gas
+        fee Amount in terms of speacified tokens, NOT APPLICABLE in EXNOMY]\n\"json\":
+        \"string\",              [josn string of this order]\n\"createdAt\": \"time\",
+        \t\t   [time at which has been created, ex - 2019-11-20T10:07:52.523606Z]\n\"updatedAt\":
+        \t\t\t\t   [time at which has been updated, ex - 2019-11-20T10:07:52.523606Z]\n}\n}\n}"
       parameters:
       - description: OrderID
-        in: query
+        in: path
         name: orderID
+        required: true
+        type: string
+      - description: DEX-AUTH-TOKEN, ex - 0x31ebd457b999bf99759602f5ece5aa5033cb56b3#DEX-EXONOMY-AUTH#0xe99ac942cc4e126e62e1a98c756bf3e3e09de1dc5cbead6b02992063084af399120a45642a8e2876c608d43f11aaa07d7511d338e7d7d4acdc91e1e90c05e3581c
+        in: header
+        name: DEX-EXONOMY-AUTH
         required: true
         type: string
       produces:
@@ -278,6 +396,8 @@ paths:
           schema:
             $ref: '#/definitions/api.ApiError'
       summary: Get Single order
+schemes:
+- https
 securityDefinitions:
   ExnomyAuthToken:
     in: header
