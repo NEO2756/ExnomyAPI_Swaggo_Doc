@@ -90,7 +90,7 @@ paths:
       consumes:
       - application/json
       description: "Find published markets from db and attach last 24hr market status
-        for each market.\n{\n\"status\": int,    [STATUS CODE, 0 for Success , Greater
+        for each market.\n{\n\"status\": int,    [Status Code, 0 for Success , Greater
         than 0 for ERROR]\n\"desc\": \"string\", [Description String for Success and
         Failue]\n\"data\": \"Array Of Objects\",    [Array of Market Object]\n\"markets\":
         [   [Market Model]\n{\n\"id\": \"string\",  [Market ID, Symbol Pair ex - XRP-BTC]\n\"baseToken\":
@@ -105,9 +105,9 @@ paths:
         [PRECISION FOR PRICE for BASE-QUOTE token pair, ex- 5]\n\"priceDecimals\":
         int, [DECIMAL FOR PRICE for BASE-QUOTE token pair, ex- 8]\n\"amountDecimals\":
         int, [DECIMALS FOR AMOUNT for BASE-QUOTE token pair, ex- 6]\n\"asMakerFeeRate\":
-        \"string\", [MAKER FEE RATE string for BASE-QUOTE token pair]\n\"asTakerFeeRate\":
-        \"string\", [TAKER FEE RATE string for BASE-QUOTE token pair]\n\"gasFeeAmount\":
-        \"string\",   [NOT APPLICABLE]\n\"supportedOrderTypes\": [   [ONLY LIMIT is
+        \"string\", [MAKER fee rate string for BASE-QUOTE token pair]\n\"asTakerFeeRate\":
+        \"string\", [TAKER fee rate string for BASE-QUOTE token pair]\n\"gasFeeAmount\":
+        \"string\",   [NOT applicable]\n\"supportedOrderTypes\": [   [only LIMIT is
         supported right now]\n\"limit\",\n\"market\"\n],\n\"marketOrderMaxSlippage\":
         \"string\", [FUTURE USE, Not applicable right now]\n\"lastPriceIncrease\":
         \"string\",      [LAST PRICE INCREASE value]\n\"lastPrice\": \"string\",              [Last
@@ -190,14 +190,29 @@ paths:
     get:
       consumes:
       - application/json
-      description: "Find the latest snapshot version 2 corresponding to MarketID\n{\n\"status\":
-        int,    [STATUS CODE, 0 for Success , Greater than 0 for ERROR]\n\"desc\":
-        \"string\", [Description String for Success and Failue]\n\"data\": {\n\"orderBook\":
-        {\n\"sequence\": int,  [DATABASE SEQUENCE NUMBER]\n\"bids\": [   \"Array of
-        Objects\", [ARRAY OF BIDS OBJECTS]\n[\n\"string\", [BID PRICE, ex - \"0.00003108\"]\n\"string\"\t\t,
-        [BID AMOUNT, ex - \"330\"]\n]\n],\n\"asks\": [ \"Array of Objects\", [ARRAY
-        OF ASKS OBJECTS]\n[\n\"string\", [ASK PRICE, ex - \"0.00003108\"]\n\"string\",
-        [ASK AMOUNT, ex - \"330\"]\n]\n]\n}\n}\n}"
+      description: |-
+        Find the latest snapshot version 2 corresponding to MarketID
+        {
+        "status": int,    [Status Code, 0 for Success , Greater than 0 for ERROR]
+        "desc": "string", [Description String for Success and Failue]
+        "data": {
+        "orderBook": {
+        "sequence": int,  [Database speacific Sequence Number]
+        "bids": [   "Array of Objects", [Array bids Object]
+        [
+        "string", [Bid Price, ex - "0.00003108"]
+        "string", [Bif Amount, ex - "330"]
+        ]
+        ],
+        "asks": [ "Array of Objects", [Array asks Object]
+        [
+        "string", [Ask price, ex - "0.00003108"]
+        "string", [Ask Amount, ex - "330"]
+        ]
+        ]
+        }
+        }
+        }
       parameters:
       - description: 'MarketID (ex: XRP-BTC)'
         in: path
