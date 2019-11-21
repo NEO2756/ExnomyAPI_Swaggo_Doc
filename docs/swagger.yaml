@@ -185,11 +185,11 @@ paths:
       consumes:
       - application/json
       description: |-
-        **Get high, low, open, close and volume data for an interval defined bt from to to param.**
+        **Get high, low, open, close and volume data for an interval defined between 'from' to 'to' unix timestamps.**
         ```
         {
         "status": int,    [STATUS CODE, 0 for Success , Greater than 0 for ERROR]
-        "desc": "string", [Description String for Success and Failue]
+        "desc": "string", [Description String for Success and Failure]
         "data": {
         "candles": [  [Candle Information]
         {
@@ -245,8 +245,8 @@ paths:
       - application/json
       description: "**Find the latest snapshot version 2 corresponding to MarketID**\n```\n{\n\"status\":
         int,    \t\t\t\t[Status Code, 0 for Success , Greater than 0 for ERROR]\n\"desc\":
-        \"string\", \t\t\t\t[Description String for Success and Failue]\n\"data\":
-        {\n\"orderBook\": {\n\"sequence\": int, \t\t[Database speacific Sequence Number]\n\"bids\":
+        \"string\", \t\t\t\t[Description String for Success and Failure]\n\"data\":
+        {\n\"orderBook\": {\n\"sequence\": int, \t\t[Database specific Sequence Number]\n\"bids\":
         \t\t\t\t[\"Array of Objects\", [Array bids Object]\n[\n\"string\", \t\t[Bid
         Price, ex - \"0.00003108\"]\n\"string\", \t\t[Bif Amount, ex - \"330\"]\n]\n],\n\"asks\":
         \t\t\t\t[Array of Objects, [Array asks Object]\n[\n\"string\", \t\t[Ask price,
@@ -278,7 +278,7 @@ paths:
         ```
         {
         "status": int,    [STATUS CODE, 0 for Success , Greater than 0 for ERROR]
-        "desc": "string", [Description String for Success and Failue]
+        "desc": "string", [Description String for Success and Failure]
         "data": {
         "count": int,   [Size of the trades array object]
         "trades": [     [Array of Objects]
@@ -286,14 +286,14 @@ paths:
         "id": int,   [DB Speacific Trade ID ]
         "transactionID": 36671, [DB Speacific Transaction ID]
         "transactionHash": [Hash of Trade Transaction on Blockchain ex - 0xfba0a551880a7a9458fdcd9e55078645da4a11c399be91efdd19a6a82014e731],
-        "status": "string", [Status of the Trade transaction, ex - successful, pending, pending]
+        "status": "string", [Status of the Trade transaction, ex - successful, pending, canceled]
         "marketID": "string", [Market ID, ex - XRP-BTC]
         "maker": "string", [Maker Account Address ex - 0x31ebd457b999bf99759602f5ece5aa5033cb56b3]
         "taker": "string", [Taker Account Address ex - 0x31ebd457b999bf99759602f5ece5aa5033cb56b3],
         "takerSide": "string", [Side of Taker order ex - but OR sell]
         "makerOrderID": "string, [OrderID of Maker, ex - 0xbf9abcaa08bb820f791206564d261e3e36309ac16f5b091e507f0b14fb369656],
         "takerOrderID": "string, [OrderID of Taker, ex - 0xbf9abcaa08bb820f791206564d261e3e36309ac16f5b091e507f0b14fb369656],
-        "sequence": uint, [DB speacific sequence number]
+        "sequence": uint, [DB specific sequence number]
         "amount": "uint", [Amount/Quantity of trade, ex - 230]
         "price": "string", [Price of Trade, ex - 0.00003096]
         "executedAt": "time", [Time When Trade executed,  ex - 2019-11-20T08:36:26Z]
@@ -326,14 +326,14 @@ paths:
     get:
       consumes:
       - application/json
-      description: "**Find latest 'N' speacified orders, 20 if 'N' is not speacifies
+      description: "**Find latest 'N' specified orders, 20 if 'N' is not specifies
         corresponding to particular MarketID and user address**\n```\n\"status\":
         int,    [STATUS CODE, 0 for Success , Greater than 0 for ERROR]\n\"desc\":
-        \"string\", [Description String for Success and Failue]\n\"data\": {\n\"count\":
+        \"string\", [Description String for Success and Failure]\n\"data\": {\n\"count\":
         int, \t\t\t\t\t   [Size of the Order Array]\n\"orders\": [\t\t\t\t\t       [Order
         Array]\n{\n\"id\": \"string\",                [Order ID of the Requested Order
         ex - 0x8d9cafdbed805fb495f7e29c9cf7a269e140f326701f388e77d840228134b103]\n\"traderAddress\":
-        \"string\",     [Address of the Trader used for Loging In],\n\"marketID\":
+        \"string\",     [Address of the Trader used for Logging In],\n\"marketID\":
         \"string\",          [Market ID of the order, ex - XRP-BTC]\n\"side\": \"string\",
         \             [Side of the Order, ex - buy OR sell]\n\"price\": \"string\",
         \            [Price of the Order, ex - 0.00003081]\n\"amount\": \"string\",
@@ -341,13 +341,13 @@ paths:
         of the order, canceled, pending, partial_filled OR full_filled]\n\"type\":
         \"string\",              [Order type Limit or Market, Limit is only supported
         right now]\n\"version\": \"string\",           [verison of the platform]\n\"availableAmount\":
-        \"string\",   [Amount available fto Trade]\n\"confirmedAmount\": \"string\",
+        \"string\",   [Amount available to Trade]\n\"confirmedAmount\": \"string\",
         \  [Traded amount, confirmed on blockchain]\n\"canceledAmount\": \"string\",
         \   [canceled Amount]\n\"pendingAmount\": \"string\",     [Left Over Amount
         for trading, Incase of partial fills]\n\"makerFeeRate\": \"string\",      [makerFee
         Rate]\n\"takerFeeRate\": \"string\",      [Taker fee Rate]\n\"makerRebateRate\":
-        \"string\",   [makerRebateRate ]\n\"gasFeeAmount\": \"string\",      [Gas
-        fee Amount in terms of speacified tokens, NOT APPLICABLE in EXNOMY]\n\"json\":
+        \"string\",   [makerRebateRate]\n\"gasFeeAmount\": \"string\",      [Gas fee
+        Amount in terms of specified tokens, NOT APPLICABLE in EXNOMY]\n\"json\":
         \"string\",              [josn string of this order]\n\"createdAt\": \"time\",
         \t\t   [time at which has been created, ex - 2019-11-20T10:07:52.523606Z]\n\"updatedAt\":
         \t\t\t\t   [time at which has been updated, ex - 2019-11-20T10:07:52.523606Z]\n}\n]\n}\n}\n```"
@@ -379,7 +379,7 @@ paths:
     delete:
       consumes:
       - application/json
-      description: '**Find the order with ID speacified as OrderID and Mark it cancel.**'
+      description: '**Find the order with ID specified as OrderID and Mark it cancel.**'
       parameters:
       - description: OrderID
         in: path
@@ -410,7 +410,7 @@ paths:
       - application/json
       description: "**Get order corresponding to a particular order ID**\n```\n{\n\"status\":
         int,    [STATUS CODE, 0 for Success , Greater than 0 for ERROR]\n\"desc\":
-        \"string\", [Description String for Success and Failue]\n\"data\": {\n\"order\":
+        \"string\", [Description String for Success and Failure]\n\"data\": {\n\"order\":
         {\n\"id\": \"string\",                [Order ID of the Requested Order ex
         - 0x8d9cafdbed805fb495f7e29c9cf7a269e140f326701f388e77d840228134b103]\n\"traderAddress\":
         \"string\",     [Address of the Trader used for Loging In],\n\"marketID\":
@@ -427,7 +427,7 @@ paths:
         for trading, Incase of partial fills]\n\"makerFeeRate\": \"string\",      [makerFee
         Rate]\n\"takerFeeRate\": \"string\",      [Taker fee Rate]\n\"makerRebateRate\":
         \"string\",   [makerRebateRate ]\n\"gasFeeAmount\": \"string\",      [Gas
-        fee Amount in terms of speacified tokens, NOT APPLICABLE in EXNOMY]\n\"json\":
+        fee Amount in terms of specified tokens, NOT APPLICABLE in EXNOMY]\n\"json\":
         \"string\",              [josn string of this order]\n\"createdAt\": \"time\",
         \t\t   [time at which has been created, ex - 2019-11-20T10:07:52.523606Z]\n\"updatedAt\":
         \t\t\t\t   [time at which has been updated, ex - 2019-11-20T10:07:52.523606Z]\n}\n}\n}\n```"
