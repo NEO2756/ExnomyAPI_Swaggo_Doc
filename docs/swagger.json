@@ -20,6 +20,35 @@
     },
     "host": "api.exnomy.com",
     "paths": {
+        "/assets": {
+            "get": {
+                "description": "**Get All the assets available on the exchange**\n```\n{\n\"status\": int,    [STATUS CODE, 0 for Success , Greater than 0 for ERROR]\n\"desc\": \"string\", [Description String for Success and Failure]\n\"data\": {\n\"tokens\": [\n{\n\"symbol\": \"string\"\t\t\t\t\t\t\t\t[Symbol of the asset, ex - BTC]\n\"name\": \"string\",\t\t\t\t\t\t\t\t[Name of the asset, ex - Bitcoin]\n\"Address\": \"string\", \t\t\t\t\t\t\t[Exnomy Smart contract specific address]\n\"Decimal\": int,\t\t\t\t\t\t\t\t\t[Decimal of the asset]\n\"updatedAt\": \"time\",\t\t\t\t\t\t\t\t[Time when asset updated in DB]\n\"createdAt\": \"time\"\t\t\t\t\t\t\t\t[Time when asset created in DB]\n}\n]\n}",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Show all assets present at exnomy.com",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/api.Response"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api.ApiError"
+                        }
+                    }
+                }
+            }
+        },
         "/markets": {
             "get": {
                 "description": "**Find published markets from db and attach last 24hr market status for each market**\n```\n{\n\"status\": int,\t\t\t\t\t\t\t\t\t\t[Status Code, 0 for Success , Greater than 0 for ERROR]\n\"desc\": \"string\",\t\t\t\t\t\t\t\t\t[Description String for Success and Failue]\n\"data\": \"Array Of Objects\",\t\t\t\t\t\t\t[Array of Market Object]\n\"markets\": [   [Market Model]\n{\n\"id\": \"string\",                \t\t\t[Market ID, Symbol Pair ex - XRP-BTC]\n\"baseToken\": \"string\", \t\t\t\t\t[SYMBOL of the Base Token, ex - XRP]\n\"baseTokenProjectUrl\": \"URI\", \t\t\t[OPTIONAL, URL of the BaseToken Projet, ex - www.ripple.com]\n\"baseTokenName\": \"string\", \t\t\t\t[NAME of the Base Token, ex - Riple]\n\"baseTokenDecimals\": int, \t\t\t\t[DECIMAL of the Base Token, ex - 8]\n\"baseTokenAddress\": \t\t\t\t\t[ADDRESS of the Base Token],\n\"quoteToken\": \"string\", \t\t\t\t[SYMBOL of the Quote Token, ex - BTC]\n\"quoteTokenDecimals\": int, \t\t\t\t[DECIMAL of the Quote Token, ex - 8]\n\"quoteTokenAddress\": string, \t\t\t[ADDRESS of the Base Token]\n\"minOrderSize\": \"string\", \t\t\t\t[MINIMUM order size for BASE-QUOTE token pair, ex- 0.0001]\n\"pricePrecision\": int, \t\t\t\t\t[PRECISION FOR PRICE for BASE-QUOTE token pair, ex- 5]\n\"priceDecimals\": int, \t\t\t\t\t[DECIMAL FOR PRICE for BASE-QUOTE token pair, ex- 8]\n\"amountDecimals\": int, \t\t\t\t\t[DECIMALS FOR AMOUNT for BASE-QUOTE token pair, ex- 6]\n\"asMakerFeeRate\": \"string\", \t\t\t[MAKER fee rate string for BASE-QUOTE token pair]\n\"asTakerFeeRate\": \"string\", \t\t\t[TAKER fee rate string for BASE-QUOTE token pair]\n\"gasFeeAmount\": \"string\",   \t\t\t[NOT applicable]\n\"supportedOrderTypes\": [   \t\t\t\t[only LIMIT is supported right now]\n\"limit\",\n\"market\"\n],\n\"marketOrderMaxSlippage\": \"string\",\t\t[FUTURE USE, Not applicable right now]\n\"lastPriceIncrease\": \"string\",      \t[LAST PRICE INCREASE value]\n\"lastPrice\": \"string\",              \t[Last Traded Price]\n\"price24h\": \"string\",\t\t\t\t\t[PRICE CHANGE in last 24hrs, ex - +0.3 % OR -0.4 %]\n\"amount24h\": \"string\",\t\t\t\t\t[LAST 24hr TOTAL AMOUNT CHANGE]\n\"quoteTokenVolume24h\": \"246789\"     \t[VOLUME of LAST 24Hr Traded QUOTE TOKEN]\n}\n]\n}\n}",
@@ -405,7 +434,6 @@
                     "type": "integer"
                 },
                 "marketID": {
-                    "description": "ID this is userid",
                     "type": "string"
                 },
                 "orderType": {
@@ -438,7 +466,8 @@
                     "type": "string"
                 },
                 "json": {
-                    "type": "string"
+                    "type": "object",
+                    "$ref": "#/definitions/models.OrderJSON"
                 },
                 "makerRebateRate": {
                     "type": "number"
@@ -478,7 +507,10 @@
                     "type": "integer"
                 },
                 "orders": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Order"
+                    }
                 }
             }
         },
@@ -486,7 +518,8 @@
             "type": "object",
             "properties": {
                 "order": {
-                    "type": "string"
+                    "type": "object",
+                    "$ref": "#/definitions/models.Order"
                 }
             }
         },
@@ -497,7 +530,10 @@
                     "type": "integer"
                 },
                 "trades": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Trade"
+                    }
                 }
             }
         },
@@ -532,6 +568,156 @@
                 },
                 "sequence": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.Order": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "availableAmount": {
+                    "type": "number"
+                },
+                "canceledAmount": {
+                    "type": "number"
+                },
+                "confirmedAmount": {
+                    "type": "number"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "gasFeeAmount": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "json": {
+                    "type": "string"
+                },
+                "makerFeeRate": {
+                    "type": "number"
+                },
+                "makerRebateRate": {
+                    "type": "number"
+                },
+                "marketID": {
+                    "type": "string"
+                },
+                "pendingAmount": {
+                    "type": "number"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "side": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "takerFeeRate": {
+                    "type": "number"
+                },
+                "traderAddress": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.OrderJSON": {
+            "type": "object",
+            "properties": {
+                "baseToken": {
+                    "type": "string"
+                },
+                "baseTokenAmount": {
+                    "type": "number"
+                },
+                "data": {
+                    "type": "string"
+                },
+                "gasTokenAmount": {
+                    "type": "number"
+                },
+                "quoteToken": {
+                    "type": "string"
+                },
+                "quoteTokenAmount": {
+                    "type": "number"
+                },
+                "relayer": {
+                    "type": "string"
+                },
+                "signature": {
+                    "type": "string"
+                },
+                "trader": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Trade": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "executedAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "maker": {
+                    "type": "string"
+                },
+                "makerOrderID": {
+                    "type": "string"
+                },
+                "marketID": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "sequence": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "taker": {
+                    "type": "string"
+                },
+                "takerOrderID": {
+                    "type": "string"
+                },
+                "takerSide": {
+                    "type": "string"
+                },
+                "transactionHash": {
+                    "type": "string"
+                },
+                "transactionID": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
                 }
             }
         }
