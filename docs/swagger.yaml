@@ -526,9 +526,9 @@ paths:
         be dropped**\n```\nRequest Body\n{\n\"address\": \"string\",        [Wallet
         Address]\n\"ID\": \"string\"  \t\t\t[Order ID in response to /orders/build
         ]\n\"Signature\" : \"string\" \t\t[Signature of Order ID]\n}\nNOTE: Signature
-        = '0x' + sig.slice(130) + '0'.repeat(62) + sig.slice(2, 130);\nsig => sig
-        for above expression can be obtained using any wallet like Metamask, MyEtherwallet
-        etc, Pls refer below links\n```\n[MyETherWallet](https://blog.tenx.tech/sign-message-instructions-for-ethereum-address-verification-2c8caee4c3af/)\n[Metamask](https://medium.com/metamask/the-new-secure-way-to-sign-data-in-your-browser-6af9dd2a1527)"
+        = '0x' + ecodedSig.slice(130) + '0'.repeat(62) + ecodedSig.slice(2, 130);\nencodeSig
+        => encodeSig for above expression can be obtained using any eth wallet like
+        Metamask, MyEtherwallet etc, Pls refer below links\n```\n[MyETherWallet](https://blog.tenx.tech/sign-message-instructions-for-ethereum-address-verification-2c8caee4c3af/)\n[Metamask](https://medium.com/metamask/the-new-secure-way-to-sign-data-in-your-browser-6af9dd2a1527)"
       parameters:
       - description: Place Order request
         in: body
