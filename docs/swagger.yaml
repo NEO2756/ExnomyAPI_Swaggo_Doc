@@ -25,7 +25,11 @@ definitions:
     properties:
       address:
         type: string
+      admin_address:
+        type: string
       amount:
+        type: string
+      exchange_address:
         type: string
       expires:
         type: integer
@@ -38,7 +42,9 @@ definitions:
       side:
         type: string
     required:
+    - admin_address
     - amount
+    - exchange_address
     - marketID
     - orderType
     - price
@@ -78,18 +84,6 @@ definitions:
         type: string
     required:
     - id
-    type: object
-  api.PlaceOrderReq:
-    properties:
-      address:
-        type: string
-      orderID:
-        type: string
-      signature:
-        type: string
-    required:
-    - orderID
-    - signature
     type: object
   api.QueryOrderResp:
     properties:
@@ -242,12 +236,16 @@ info:
     email: info@dexhigh.com
     name: Exnomy Support
     url: https://www.exnomy.com/terms-and-privacy
-  description: This is Exnomy API Server.
+  description: |-
+    This is Exnomy API Server.
+    Exnomy protocol has multiple exchange instance capability. Each Exchange has unique Market ID.
+    The uniqueness of exchange is curated by combination of exchanges matching engine smart contract address and Market pair.
+    Example: For exchange with smart contract address '0x10F93CAB362137e937b08880ac4d2dE89863c5Bb', Market ID for XRP/BTC will be 0x10F93CAB362137e937b08880ac4d2dE89863c5Bb-XRP-BTC
   license:
     name: Apache 2.0
     url: https://github.com/blockbankcoltd/Exnomy/blob/master/LICENSE
   termsOfService: https://www.exnomy.com/terms-and-privacy
-  title: Exnomy API Swagger Documentation
+  title: Exnomy API Documentation
   version: "1.0"
 paths:
   /assets:
@@ -286,7 +284,8 @@ paths:
         0 for Success , Greater than 0 for ERROR]\n\"desc\": \"string\",\t\t\t\t\t\t\t\t\t[Description
         String for Success and Failue]\n\"data\": \"Array Of Objects\",\t\t\t\t\t\t\t[Array
         of Market Object]\n\"markets\": [   [Market Model]\n{\n\"id\": \"string\",
-        \               \t\t\t[Market ID, Symbol Pair ex - XRP-BTC]\n\"baseToken\":
+        \               \t\t\t[Market ID, Market ID is Combination of Exchange_ID-BASE-QUOTE
+        , ex :- 0x10F93CAB362137e937b08880ac4d2dE89863c5Bb-XRP-BTC]\n\"baseToken\":
         \"string\", \t\t\t\t\t[SYMBOL of the Base Token, ex - XRP]\n\"baseTokenProjectUrl\":
         \"URI\", \t\t\t[OPTIONAL, URL of the BaseToken Projet, ex - www.ripple.com]\n\"baseTokenName\":
         \"string\", \t\t\t\t[NAME of the Base Token, ex - Riple]\n\"baseTokenDecimals\":
@@ -348,7 +347,8 @@ paths:
         }
         ```
       parameters:
-      - description: Market ID, ex XRP-BTC
+      - description: Market ID, Market ID is Combination of Exchange_ID-BASE-QUOTE
+          , ex :- 0x10F93CAB362137e937b08880ac4d2dE89863c5Bb-XRP-BTC
         in: path
         name: marketID
         required: true
@@ -395,7 +395,8 @@ paths:
         \t\t\t\t[Array of Objects, [Array asks Object]\n[\n\"string\", \t\t[Ask price,
         ex - \"0.00003108\"]\n\"string\", \t\t[Ask Amount, ex - \"330\"]\n]\n]\n}\n}\n}"
       parameters:
-      - description: 'MarketID (ex: XRP-BTC)'
+      - description: MarketID (Market ID is Combination of Exchange_ID-BASE-QUOTE
+          , ex :- 0x10F93CAB362137e937b08880ac4d2dE89863c5Bb-XRP-BTC)
         in: path
         name: marketID
         required: true
@@ -448,7 +449,8 @@ paths:
         }
         ```
       parameters:
-      - description: MarketID (ex XRP-BTC)
+      - description: MarketID (Market ID is Combination of Exchange_ID-BASE-QUOTE
+          , ex :- 0x10F93CAB362137e937b08880ac4d2dE89863c5Bb-XRP-BTC
         in: path
         name: marketID
         required: true
@@ -477,11 +479,12 @@ paths:
         Array]\n{\n\"id\": \"string\",                [Order ID of the Requested Order
         ex - 0x8d9cafdbed805fb495f7e29c9cf7a269e140f326701f388e77d840228134b103]\n\"traderAddress\":
         \"string\",     [Address of the Trader used for Logging In],\n\"marketID\":
-        \"string\",          [Market ID of the order, ex - XRP-BTC]\n\"side\": \"string\",
-        \             [Side of the Order, ex - buy OR sell]\n\"price\": \"string\",
-        \            [Price of the Order, ex - 0.00003081]\n\"amount\": \"string\",
-        \           [Amount of the Order, ex - 160]\n\"status\": \"string\",            [Status
-        of the order, canceled, pending, partial_filled OR full_filled]\n\"type\":
+        \"string\",          [Market ID of the order, Market ID is Combination of
+        Exchange_ID-BASE-QUOTE , ex :- 0x10F93CAB362137e937b08880ac4d2dE89863c5Bb-XRP-BTC]\n\"side\":
+        \"string\",              [Side of the Order, ex - buy OR sell]\n\"price\":
+        \"string\",             [Price of the Order, ex - 0.00003081]\n\"amount\":
+        \"string\",            [Amount of the Order, ex - 160]\n\"status\": \"string\",
+        \           [Status of the order, canceled, pending, partial_filled OR full_filled]\n\"type\":
         \"string\",              [Order type Limit or Market, Limit is only supported
         right now]\n\"version\": \"string\",           [verison of the platform]\n\"availableAmount\":
         \"string\",   [Amount available to Trade]\n\"confirmedAmount\": \"string\",
@@ -495,7 +498,8 @@ paths:
         \t\t   [time at which has been created, ex - 2019-11-20T10:07:52.523606Z]\n\"updatedAt\":
         \t\t\t\t   [time at which has been updated, ex - 2019-11-20T10:07:52.523606Z]\n}\n]\n}\n}\n```"
       parameters:
-      - description: MarketID ex - XRP-BTC
+      - description: MarketID, Market ID is Combination of Exchange_ID-BASE-QUOTE
+          , ex :- 0x10F93CAB362137e937b08880ac4d2dE89863c5Bb-XRP-BTC
         in: query
         name: marketID
         required: true
@@ -518,40 +522,6 @@ paths:
           schema:
             $ref: '#/definitions/api.ApiError'
       summary: Show orders, reverse-chrono order.
-    post:
-      consumes:
-      - application/json
-      description: "**Place order put the order in order book OR execute a match**\n**Place
-        Order API works only within 60sec of BuildOrder else otherwise order will
-        be dropped**\n```\nRequest Body\n{\n\"address\": \"string\",        [Wallet
-        Address]\n\"ID\": \"string\"  \t\t\t[Order ID in response to /orders/build
-        ]\n\"Signature\" : \"string\" \t\t[Signature of Order ID]\n}\nNOTE: Signature
-        = '0x' + ecodedSig.slice(130) + '0'.repeat(62) + ecodedSig.slice(2, 130);\nencodeSig
-        => encodeSig for above expression can be obtained using any eth wallet like
-        Metamask, MyEtherwallet etc, Pls refer below links\n```\n[MyETherWallet](https://blog.tenx.tech/sign-message-instructions-for-ethereum-address-verification-2c8caee4c3af/)\n[Metamask](https://medium.com/metamask/the-new-secure-way-to-sign-data-in-your-browser-6af9dd2a1527)"
-      parameters:
-      - description: Place Order request
-        in: body
-        name: orderSig
-        required: true
-        schema:
-          $ref: '#/definitions/api.PlaceOrderReq'
-          type: object
-      - description: '**DEX-AUTH-TOKEN is combination of <''AccountAddress''>#DEX-EXONOMY-AUTH#<Signature
-          of Str ''DEX-EXNOMY-AUTH''>**, ex - 0x31ebd457b999bf99759602f5ece5aa5033cb56b3#DEX-EXONOMY-AUTH#0xe99ac942cc4e126e62e1a98c756bf3e3e09de1dc5cbead6b02992063084af399120a45642a8e2876c608d43f11aaa07d7511d338e7d7d4acdc91e1e90c05e3581c'
-        in: header
-        name: DEX-EXONOMY-AUTH
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200": {}
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/api.ApiError'
-      summary: Place the order in order book / Execute if match.
   /orders/{OrderID}:
     delete:
       consumes:
@@ -591,11 +561,12 @@ paths:
         {\n\"id\": \"string\",                [Order ID of the Requested Order ex
         - 0x8d9cafdbed805fb495f7e29c9cf7a269e140f326701f388e77d840228134b103]\n\"traderAddress\":
         \"string\",     [Address of the Trader used for Loging In],\n\"marketID\":
-        \"string\",          [Market ID of the order, ex - XRP-BTC]\n\"side\": \"string\",
-        \             [Side of the Order, ex - buy OR sell]\n\"price\": \"string\",
-        \            [Price of the Order, ex - 0.00003081]\n\"amount\": \"string\",
-        \           [Amount of the Order, ex - 160]\n\"status\": \"string\",            [Status
-        of the order, canceled, pending, partial_filled OR full_filled]\n\"type\":
+        \"string\",          [Market ID of the order, Market ID is Combination of
+        Exchange_ID-BASE-QUOTE , ex :- 0x10F93CAB362137e937b08880ac4d2dE89863c5Bb-XRP-BTC]\n\"side\":
+        \"string\",              [Side of the Order, ex - buy OR sell]\n\"price\":
+        \"string\",             [Price of the Order, ex - 0.00003081]\n\"amount\":
+        \"string\",            [Amount of the Order, ex - 160]\n\"status\": \"string\",
+        \           [Status of the order, canceled, pending, partial_filled OR full_filled]\n\"type\":
         \"string\",              [Order type Limit or Market, Limit is only supported
         right now]\n\"version\": \"string\",           [verison of the platform]\n\"availableAmount\":
         \"string\",   [Amount available fto Trade]\n\"confirmedAmount\": \"string\",
@@ -640,17 +611,19 @@ paths:
         the time of PlaceOrder**\n```\nRequest Body\n{\n\"address\": \"string\",\t\t[Wallet
         Address]\n\"amount\": \"string\",\t\t\t[Amount of the Order]\n\"expires\":
         0,\t\t\t\t[Time when order can expire, Optional param]\n\"marketID\": \"string\",\t\t[Market
-        ID, ex - XRP-BTC]\n\"orderType\": \"string\",\t\t[Type of Order, Limit or
-        Market, Only Limit is Supported right now]\n\"price\": \"string\",\t\t\t[Price
-        of the Order]\n\"side\": \"string\"\t\t\t[side of order, Buy OR Sell]\n}\nResponse
-        Body\n{\n\"amount\": 0, \t\t\t\t[Amount of Order]\n\"asMakerFeeRate\": 0,\t\t[Maker
-        Fee Rate]\n\"asTakerFeeRate\": 0,\t\t[Taker Fee Rate]\n\"gasFeeAmount\": 0,\t\t\t[gasFeeAmount,
-        Not Applicable  right now]\n\"id\": \"string\",\t\t\t\t[Generated ID of the
-        order]\n\"json\": \"string\",\t\t\t[json string of Order]\n\"makerRebateRate\":
-        0,\t\t[Maker FRebate rate]\n\"marketID\": \"string\",\t\t[market ID, ex -
-        XRP-BTC]\n\"price\": 0,\t\t\t\t\t[Price of the order]\n\"side\": \"string\",\t\t\t[side
-        of order, Buy OR Sell]\n\"type\": \"string\"\t\t\t[Type of Order, Limit or
-        Market, Only Limit is Supported right now]\n}\n```"
+        ID, Market ID is Combination of Exchange_ID-BASE-QUOTE , ex :- 0x10F93CAB362137e937b08880ac4d2dE89863c5Bb-XRP-BTC]\n\"orderType\":
+        \"string\",\t\t[Type of Order, Limit or Market, Only Limit is Supported right
+        now]\n\"price\": \"string\",\t\t\t[Price of the Order]\n\"side\": \"string\"\t\t\t[side
+        of order, Buy OR Sell]\n}\nResponse Body\n{\n\"amount\": 0, \t\t\t\t[Amount
+        of Order]\n\"asMakerFeeRate\": 0,\t\t[Maker Fee Rate]\n\"asTakerFeeRate\":
+        0,\t\t[Taker Fee Rate]\n\"gasFeeAmount\": 0,\t\t\t[gasFeeAmount, Not Applicable
+        \ right now]\n\"id\": \"string\",\t\t\t\t[Generated ID of the order]\n\"json\":
+        \"string\",\t\t\t[json string of Order]\n\"makerRebateRate\": 0,\t\t[Maker
+        FRebate rate]\n\"marketID\": \"string\",\t\t[market ID, Market ID is Combination
+        of Exchange_ID-BASE-QUOTE , ex :- 0x10F93CAB362137e937b08880ac4d2dE89863c5Bb-XRP-BTC]\n\"price\":
+        0,\t\t\t\t\t[Price of the order]\n\"side\": \"string\",\t\t\t[side of order,
+        Buy OR Sell]\n\"type\": \"string\"\t\t\t[Type of Order, Limit or Market, Only
+        Limit is Supported right now]\n}\n```"
       parameters:
       - description: Build Order request
         in: body
